@@ -254,31 +254,52 @@ elif page == "Model Prediction":
     Enter the patient's medical details to predict the likelihood of diabetes.
     """)
     
+    # Reset form fields when navigating to this page
+    if "form_reset" not in st.session_state or st.session_state.selected_page != "Model Prediction":
+        st.session_state.form_reset = True
+        st.session_state.pregnancies = 0
+        st.session_state.glucose = 0
+        st.session_state.blood_pressure = 0
+        st.session_state.skin_thickness = 0
+        st.session_state.insulin = 0
+        st.session_state.bmi = 0.0
+        st.session_state.diabetes_pedigree = 0.0
+        st.session_state.age = 0
+    
     # Create input fields with better formatting
     col1, col2 = st.columns(2)
     
     with col1:
-        pregnancies = st.number_input('Pregnancies', min_value=0, max_value=20, value=1,
-                                      help="Number of times pregnant")
-        glucose = st.number_input('Glucose (mg/dL)', min_value=0, max_value=300, value=100,
+        pregnancies = st.number_input('Pregnancies', min_value=0, max_value=20, 
+                                    value=st.session_state.pregnancies,
+                                    help="Number of times pregnant")
+        glucose = st.number_input('Glucose (mg/dL)', min_value=0, max_value=300, 
+                                value=st.session_state.glucose,
                                 help="Plasma glucose concentration")
-        blood_pressure = st.number_input('Blood Pressure (mm Hg)', min_value=0, max_value=150, value=70,
+        blood_pressure = st.number_input('Blood Pressure (mm Hg)', min_value=0, max_value=150, 
+                                       value=st.session_state.blood_pressure,
                                        help="Diastolic blood pressure")
-        skin_thickness = st.number_input('Skin Thickness (mm)', min_value=0, max_value=100, value=20,
+        skin_thickness = st.number_input('Skin Thickness (mm)', min_value=0, max_value=100, 
+                                       value=st.session_state.skin_thickness,
                                        help="Triceps skin fold thickness")
     
     with col2:
-        insulin = st.number_input('Insulin (μU/mL)', min_value=0, max_value=1000, value=80,
+        insulin = st.number_input('Insulin (μU/mL)', min_value=0, max_value=1000, 
+                                value=st.session_state.insulin,
                                 help="2-Hour serum insulin")
-        bmi = st.number_input('BMI (kg/m²)', min_value=0.0, max_value=70.0, value=25.0, step=0.1,
+        bmi = st.number_input('BMI (kg/m²)', min_value=0.0, max_value=70.0, 
+                            value=st.session_state.bmi, step=0.1,
                             help="Body mass index")
         diabetes_pedigree = st.number_input('Diabetes Pedigree Function', min_value=0.0, max_value=3.0, 
-                                          value=0.5, step=0.01,
+                                          value=st.session_state.diabetes_pedigree, step=0.01,
                                           help="Diabetes pedigree function")
-        age = st.number_input('Age (years)', min_value=0, max_value=120, value=30,
-                            help="Age in years")
+        age = st.number_input('Age (years)', min_value=0, max_value=120, 
+                             value=st.session_state.age,
+                             help="Age in years")
     
-    # Prediction button
+    
+
+    
     # Prediction button with loading spinner
     if st.button('Predict Diabetes', key='predict_button'):
         with st.spinner('Predicting...'):
