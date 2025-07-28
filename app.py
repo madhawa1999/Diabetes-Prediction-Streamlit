@@ -297,116 +297,126 @@ elif page == "Model Prediction":
                              value=st.session_state.age,
                              help="Age in years")
     
+    # Check if all fields are zero
+    all_zero = (pregnancies == 0 and 
+                glucose == 0 and 
+                blood_pressure == 0 and 
+                skin_thickness == 0 and 
+                insulin == 0 and 
+                bmi == 0.0 and 
+                diabetes_pedigree == 0.0 and 
+                age == 0)
     
-
-    
-    # Prediction button with loading spinner
-    if st.button('Predict Diabetes', key='predict_button'):
-        with st.spinner('Predicting...'):
-            try:
-                # Create input array
-                input_data = np.array([[pregnancies, glucose, blood_pressure, skin_thickness, 
-                                    insulin, bmi, diabetes_pedigree, age]])
-                
-                # Standardize the input
-                input_scaled = scaler.transform(input_data)
-                
-                # Make prediction
-                prediction = model.predict(input_scaled)
-                probability = model.predict_proba(input_scaled)[0][1]
-                
-                # Display results
-                st.subheader("Prediction Result")
-                if prediction[0] == 1:
-                    st.error(f"**Diabetes Detected** with {probability*100:.2f}% probability")
-                    st.write("The model predicts this patient has diabetes. Please consult with a healthcare professional.")
-                else:
-                    st.success(f"**No Diabetes Detected** with {(1-probability)*100:.2f}% probability")
-                    st.write("The model predicts this patient does not have diabetes.")
-                
-                # Enhanced Probability Meter with Ruler Marks
-                st.write("\n**Probability Meter**")
-                
-                # Create custom HTML/CSS for the enhanced progress bar
-                st.markdown(f"""
-                <style>
-                    .progress-container {{
-                        width: 100%;
-                        background-color: #f0f2f6;
-                        border-radius: 8px;
-                        margin: 10px 0;
-                        position: relative;
-                        height: 25px;
-                    }}
-                    .progress-bar {{
-                        width: {probability * 100}%;
-                        height: 100%;
-                        border-radius: 8px;
-                        background-color: #e74c3c;
-                        position: absolute;
-                    }}
-                    .ruler-marks {{
-                        position: absolute;
-                        width: 100%;
-                        height: 100%;
-                        display: flex;
-                        justify-content: space-between;
-                    }}
-                    .mark {{
-                        width: 1px;
-                        height: 10px;
-                        background-color: #7f8c8d;
-                        position: relative;
-                        top: 15px;
-                    }}
-                    .mark-label {{
-                        position: absolute;
-                        top: 20px;
-                        font-size: 10px;
-                        transform: translateX(-50%);
-                    }}
-                    .risk-zones {{
-                        display: flex;
-                        justify-content: space-between;
-                        width: 100%;
-                        margin-top: 25px;
-                        font-size: 12px;
-                    }}
-                    .risk-zone {{
-                        text-align: center;
-                        padding: 2px 5px;
-                        border-radius: 4px;
-                    }}
-                </style>
-                
-                <div class="progress-container">
-                    <div class="progress-bar"></div>
-                    <div class="ruler-marks">
-                        {' '.join(['<div class="mark" style="left: {}%"><div class="mark-label">{}</div></div>'.format(i, f"{i}%") for i in range(0, 101, 10)])}
+    # Only show predict button if not all fields are zero
+    if not all_zero:
+        if st.button('Predict Diabetes', key='predict_button'):
+            with st.spinner('Predicting...'):
+                try:
+                    # Create input array
+                    input_data = np.array([[pregnancies, glucose, blood_pressure, skin_thickness, 
+                                        insulin, bmi, diabetes_pedigree, age]])
+                    
+                    # Standardize the input
+                    input_scaled = scaler.transform(input_data)
+                    
+                    # Make prediction
+                    prediction = model.predict(input_scaled)
+                    probability = model.predict_proba(input_scaled)[0][1]
+                    
+                    # Display results
+                    st.subheader("Prediction Result")
+                    if prediction[0] == 1:
+                        st.error(f"**Diabetes Detected** with {probability*100:.2f}% probability")
+                        st.write("The model predicts this patient has diabetes. Please consult with a healthcare professional.")
+                    else:
+                        st.success(f"**No Diabetes Detected** with {(1-probability)*100:.2f}% probability")
+                        st.write("The model predicts this patient does not have diabetes.")
+                    
+                    # Enhanced Probability Meter with Ruler Marks
+                    st.write("\n**Probability Meter**")
+                    
+                    # Create custom HTML/CSS for the enhanced progress bar
+                    st.markdown(f"""
+                    <style>
+                        .progress-container {{
+                            width: 100%;
+                            background-color: #f0f2f6;
+                            border-radius: 8px;
+                            margin: 10px 0;
+                            position: relative;
+                            height: 25px;
+                        }}
+                        .progress-bar {{
+                            width: {probability * 100}%;
+                            height: 100%;
+                            border-radius: 8px;
+                            background-color: #e74c3c;
+                            position: absolute;
+                        }}
+                        .ruler-marks {{
+                            position: absolute;
+                            width: 100%;
+                            height: 100%;
+                            display: flex;
+                            justify-content: space-between;
+                        }}
+                        .mark {{
+                            width: 1px;
+                            height: 10px;
+                            background-color: #7f8c8d;
+                            position: relative;
+                            top: 15px;
+                        }}
+                        .mark-label {{
+                            position: absolute;
+                            top: 20px;
+                            font-size: 10px;
+                            transform: translateX(-50%);
+                        }}
+                        .risk-zones {{
+                            display: flex;
+                            justify-content: space-between;
+                            width: 100%;
+                            margin-top: 25px;
+                            font-size: 12px;
+                        }}
+                        .risk-zone {{
+                            text-align: center;
+                            padding: 2px 5px;
+                            border-radius: 4px;
+                        }}
+                    </style>
+                    
+                    <div class="progress-container">
+                        <div class="progress-bar"></div>
+                        <div class="ruler-marks">
+                            {' '.join(['<div class="mark" style="left: {}%"><div class="mark-label">{}</div></div>'.format(i, f"{i}%") for i in range(0, 101, 10)])}
+                        </div>
                     </div>
-                </div>
-                
-                <div class="risk-zones">
-                    <div class="risk-zone" style="background-color: rgba(46, 204, 113, 0.2); color: #27ae60;">Low (0-30%)</div>
-                    <div class="risk-zone" style="background-color: rgba(241, 196, 15, 0.2); color: #f39c12;">Moderate (30-70%)</div>
-                    <div class="risk-zone" style="background-color: rgba(231, 76, 60, 0.2); color: #c0392b;">High (70-100%)</div>
-                </div>
-                
-                <div style="text-align: center; margin-top: 5px; font-size: 14px;">
-                    Current: <strong>{probability*100:.1f}%</strong>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                # Interpretation guidance
-                st.subheader("Interpretation Guide")
-                st.write("""
-                - **0-30%**: Low risk
-                - **30-70%**: Moderate risk - recommend follow-up
-                - **70-100%**: High risk - recommend medical consultation
-                """)
-                
-            except Exception as e:
-                st.error(f"An error occurred during prediction: {e}")
+                    
+                    <div class="risk-zones">
+                        <div class="risk-zone" style="background-color: rgba(46, 204, 113, 0.2); color: #27ae60;">Low (0-30%)</div>
+                        <div class="risk-zone" style="background-color: rgba(241, 196, 15, 0.2); color: #f39c12;">Moderate (30-70%)</div>
+                        <div class="risk-zone" style="background-color: rgba(231, 76, 60, 0.2); color: #c0392b;">High (70-100%)</div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 5px; font-size: 14px;">
+                        Current: <strong>{probability*100:.1f}%</strong>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # Interpretation guidance
+                    st.subheader("Interpretation Guide")
+                    st.write("""
+                    - **0-30%**: Low risk
+                    - **30-70%**: Moderate risk - recommend follow-up
+                    - **70-100%**: High risk - recommend medical consultation
+                    """)
+                    
+                except Exception as e:
+                    st.error(f"An error occurred during prediction: {e}")
+    else:
+        st.warning("Please enter at least one non-zero value to enable prediction")
 
 # Model Performance page
 elif page == "Model Performance":
