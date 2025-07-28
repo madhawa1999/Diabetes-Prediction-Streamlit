@@ -297,22 +297,11 @@ elif page == "Model Prediction":
                              value=st.session_state.age,
                              help="Age in years")
     
-    # Check if all fields are zero
-    all_zero = (pregnancies == 0 and 
-                glucose == 0 and 
-                blood_pressure == 0 and 
-                skin_thickness == 0 and 
-                insulin == 0 and 
-                bmi == 0.0 and 
-                diabetes_pedigree == 0.0 and 
-                age == 0)
     
-    # Show small message when all fields are zero
-    if all_zero:
-        st.caption("ℹ️ Please enter at least one non-zero value to enable prediction")
+
     
-    # Prediction button with loading spinner - always visible but disabled when all_zero
-    if st.button('Predict Diabetes', key='predict_button', disabled=all_zero):
+    # Prediction button with loading spinner
+    if st.button('Predict Diabetes', key='predict_button'):
         with st.spinner('Predicting...'):
             try:
                 # Create input array
